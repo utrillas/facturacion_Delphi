@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2024/05/06 15:28:27.000.925,=C:\Users\carmen.utrillas\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2024/05/06 15:29:26.000.841,C:\Users\carmen.utrillas\Documents\Embarcadero\Studio\Projects\Unit2.pas=C:\EjemposDelphi\Ejemplo_facturas\facturas.pas</Transaction>
+    <Transaction>2024/05/06 15:29:26.000.841,C:\Users\carmen.utrillas\Documents\Embarcadero\Studio\Projects\Unit2.dfm=C:\EjemposDelphi\Ejemplo_facturas\facturas.dfm</Transaction>
+    <Transaction>2024/05/06 15:29:33.000.110,C:\Users\carmen.utrillas\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\EjemposDelphi\Ejemplo_facturas\ufacturas.dproj</Transaction>
+    <Transaction>2024/05/06 16:46:01.000.985,=C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas</Transaction>
+    <Transaction>2024/05/06 16:52:07.000.380,C:\EjemposDelphi\Ejemplo_facturas\DatosDM.dfm=C:\EjemposDelphi\Ejemplo_facturas\Unit1.dfm</Transaction>
+    <Transaction>2024/05/06 16:52:07.000.380,C:\EjemposDelphi\Ejemplo_facturas\DatosDM.pas=C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas</Transaction>
+    <Transaction>2024/05/07 10:10:00.000.664,=C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas</Transaction>
+    <Transaction>2024/05/07 10:11:17.000.948,C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas=C:\EjemposDelphi\Ejemplo_facturas\Albaran.pas</Transaction>
+    <Transaction>2024/05/07 10:11:17.000.948,C:\EjemposDelphi\Ejemplo_facturas\Unit1.dfm=C:\EjemposDelphi\Ejemplo_facturas\Albaran.dfm</Transaction>
+    <Transaction>2024/05/07 10:17:39.000.841,C:\EjemposDelphi\Ejemplo_facturas\facturas.dfm=C:\EjemposDelphi\Ejemplo_facturas\Facturacion.dfm</Transaction>
+    <Transaction>2024/05/07 10:17:39.000.841,C:\EjemposDelphi\Ejemplo_facturas\facturas.pas=C:\EjemposDelphi\Ejemplo_facturas\Facturacion.pas</Transaction>
+    <Transaction>2024/05/10 14:58:21.000.922,=C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas</Transaction>
+    <Transaction>2024/05/10 14:59:20.000.375,C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas=C:\EjemposDelphi\Ejemplo_facturas\lineas_facturas.pas</Transaction>
+    <Transaction>2024/05/10 14:59:20.000.375,C:\EjemposDelphi\Ejemplo_facturas\Unit1.dfm=C:\EjemposDelphi\Ejemplo_facturas\lineas_facturas.dfm</Transaction>
+    <Transaction>2024/05/16 09:27:03.000.232,=C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas</Transaction>
+    <Transaction>2024/05/16 09:27:54.000.004,C:\EjemposDelphi\Ejemplo_facturas\Unit1.dfm=C:\EjemposDelphi\Ejemplo_facturas\NumeroFac.dfm</Transaction>
+    <Transaction>2024/05/16 09:27:54.000.004,C:\EjemposDelphi\Ejemplo_facturas\Unit1.pas=C:\EjemposDelphi\Ejemplo_facturas\NumeroFac.pas</Transaction>
+  </Transactions>
+</BorlandProject>

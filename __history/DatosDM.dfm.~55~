@@ -1,0 +1,125 @@
+object DMDatos: TDMDatos
+  Height = 750
+  Width = 1000
+  PixelsPerInch = 120
+  object ADOConnection1: TADOConnection
+    Connected = True
+    ConnectionString = 
+      'Provider=SQLOLEDB.1;Password=GRUPOCIE-2024;Persist Security Info' +
+      '=True;User ID=sa;Initial Catalog=Pescaderia;Data Source=CARMEN-U' +
+      'TRILLAS\SQLEXPRESS'
+    LoginPrompt = False
+    Provider = 'SQLOLEDB.1'
+    Left = 296
+    Top = 33
+  end
+  object DataSourceProducto: TDataSource
+    DataSet = ADOQueryProducto
+    Left = 73
+    Top = 153
+  end
+  object DataSourceCliente: TDataSource
+    DataSet = ADOQueryCliente
+    Left = 208
+    Top = 153
+  end
+  object DataSourceFactura: TDataSource
+    DataSet = ADOQueryFactura
+    Left = 344
+    Top = 153
+  end
+  object DataSourceAlbaran: TDataSource
+    DataSet = ADOQueryAlbaran
+    Left = 480
+    Top = 153
+  end
+  object DataSourceLineaAlbaran: TDataSource
+    DataSet = ADOQueryLiAl
+    Left = 640
+    Top = 153
+  end
+  object DataSourceLineaFactura: TDataSource
+    DataSet = ADOQueryLiFa
+    Left = 816
+    Top = 153
+  end
+  object ADOQueryProducto: TADOQuery
+    Active = True
+    Connection = ADOConnection1
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'Select * from Producto')
+    Left = 64
+    Top = 288
+  end
+  object ADOQueryCliente: TADOQuery
+    Active = True
+    Connection = ADOConnection1
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'Select * from Cliente')
+    Left = 200
+    Top = 288
+  end
+  object ADOQueryFactura: TADOQuery
+    Active = True
+    Connection = ADOConnection1
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'Select * from Factura')
+    Left = 344
+    Top = 288
+  end
+  object ADOQueryAlbaran: TADOQuery
+    Active = True
+    Connection = ADOConnection1
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'Select * from Albaran')
+    Left = 480
+    Top = 288
+  end
+  object ADOQueryLiAl: TADOQuery
+    Active = True
+    Connection = ADOConnection1
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'Select * from lineas_albaran')
+    Left = 648
+    Top = 288
+  end
+  object ADOQueryLiFa: TADOQuery
+    Active = True
+    Connection = ADOConnection1
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'Select * from linea_factura')
+    Left = 768
+    Top = 288
+  end
+  object ADOQCalculos: TADOQuery
+    Connection = ADOConnection1
+    Parameters = <>
+    Left = 368
+    Top = 456
+  end
+  object DataSourceContador: TDataSource
+    DataSet = ADOQueryContador
+    Left = 616
+    Top = 440
+  end
+  object ADOQueryContador: TADOQuery
+    Connection = ADOConnection1
+    Parameters = <>
+    SQL.Strings = (
+      'select * from Contador')
+    Left = 784
+    Top = 440
+  end
+end

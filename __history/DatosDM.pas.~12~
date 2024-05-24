@@ -1,0 +1,38 @@
+unit DatosDM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, Data.Win.ADODB;
+
+type
+  TDMDatos = class(TDataModule)
+    DataSourceAlbaran: TDataSource;
+    DataSourceFactura: TDataSource;
+    ADOQueryAlbaran: TADOQuery;
+    ADOQueryFactura: TADOQuery;
+    DataSourceLiAl: TDataSource;
+    ADOQueryLiAl: TADOQuery;
+    DataSourceProducto: TDataSource;
+    ADOQueryProducto: TADOQuery;
+    ADOConnection1: TADOConnection;
+    DataSourceCliente: TDataSource;
+    ADOQueryCliente: TADOQuery;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DMDatos: TDMDatos;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses facturacion, Albaran;
+
+{$R *.dfm}
+
+end.

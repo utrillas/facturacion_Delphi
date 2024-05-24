@@ -1,0 +1,201 @@
+unit facturas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Data.DB, Vcl.Mask, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, System.UITypes, Data.Win.ADODB;
+
+type
+  TForm2 = class(TForm)
+    Panel1: TPanel;
+    ImageLogo: TImage;
+    btnSiguiente: TSpeedButton;
+    btnUltimo: TSpeedButton;
+    btnRetroceder: TSpeedButton;
+    btnPrimero: TSpeedButton;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    SpeedButton5: TSpeedButton;
+    btnDelete: TSpeedButton;
+    SpeedButton7: TSpeedButton;
+    btnRefrescar: TSpeedButton;
+    RadioGroup1: TRadioGroup;
+    Edit1: TEdit;
+    SpeedButton9: TSpeedButton;
+    Panel4: TPanel;
+    DBEdit1: TDBEdit;
+    Label1: TLabel;
+    DBEdit2: TDBEdit;
+    Label2: TLabel;
+    ComboBox1: TComboBox;
+    Label3: TLabel;
+    Panel5: TPanel;
+    GridPage: TPageControl;
+    PAlbaranes: TTabSheet;
+    PFacturas: TTabSheet;
+    DBGridFacturas: TDBGrid;
+    DBGridAlbaranes: TDBGrid;
+    procedure FormCreate(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+    function IniciarConexion():String;
+    procedure btnPrimeroClick(Sender: TObject);
+    procedure btnRetrocederClick(Sender: TObject);
+    procedure btnSiguienteClick(Sender: TObject);
+    procedure btnUltimoClick(Sender: TObject);
+    function DarConexion(): TADOQuery;
+    procedure btnDeleteClick(Sender: TObject);
+    procedure btnRefrescarClick(Sender: TObject);
+    function VisibilizarTabla(): String;
+    function DarTabla(): String;
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form2: TForm2;
+
+implementation
+
+{$R *.dfm}
+
+uses DatosDM;
+
+//A la creación del programa
+procedure TForm2.FormCreate(Sender: TObject);
+begin
+  IniciarConexion();
+  DarConexion();
+
+end;
+//Dar conexion a cada pestaña
+function TForm2.DarConexion: TADOQuery;
+begin
+  Result := nil;
+  if GridPage.ActivePage = PAlbaranes then
+    begin
+      Result :=  DMDatos.ADOQueryAlbaran;
+    end
+  else if GridPage.ActivePage = PFacturas then
+    begin
+      Result :=  DMDatos.ADOQueryFactura;
+    end;
+end;
+//Función para saber en que tabla estamos
+function TForm2.DarTabla: String;
+begin
+if GridPage.ActivePage = PAlbaranes then
+    begin
+      Result := 'Albaran';
+    end
+    else if GridPage.ActivePage  = PFacturas then
+    begin
+      Result := 'Factura';
+    end;
+end;
+
+//Iniciar la conexion con la BBDD
+function TForm2.IniciarConexion: String;
+begin
+  DMDatos.ADOConnection1.Open;
+  DMDatos.ADOQueryAlbaran.Open;
+  DMDatos.ADOQueryFactura.Open;
+end;
+//Función para que nos muestre las tablas
+function TForm2.VisibilizarTabla: String;
+var conexion: TADOQuery;
+var tabla : String;
+begin
+    conexion := DarConexion();
+    tabla := DarTabla();
+     begin
+      conexion.SQL.Clear;
+      conexion.SQL.Text:='SELECT * FROM ' + tabla;
+      conexion.Open;
+     end;
+end;
+
+//va al primer dato
+procedure TForm2.btnDeleteClick(Sender: TObject);
+var conexion: TADOQuery;
+begin
+   conexion := DarConexion();
+   if MessageDlg('¿seguro que quiere borrar el registro?',mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        conexion.Delete;
+        ShowMessage('Se ha borrado correctamente el/los registro/s');
+      end;
+end;
+
+procedure TForm2.btnPrimeroClick(Sender: TObject);
+begin
+  if GridPage.ActivePage = PAlbaranes then
+    begin
+       DMDatos.ADOQueryAlbaran.First;
+    end
+  else if GridPage.ActivePage = PFacturas then
+    begin
+       DMDatos.ADOQueryFactura.First;
+    end;
+end;
+
+procedure TForm2.btnRefrescarClick(Sender: TObject);
+begin
+    VisibilizarTabla();
+end;
+//va a un dato anterior
+procedure TForm2.btnRetrocederClick(Sender: TObject);
+begin
+  if GridPage.ActivePage = PAlbaranes then
+    begin
+       DMDatos.ADOQueryAlbaran.Prior;
+    end
+  else if GridPage.ActivePage = PFacturas then
+    begin
+       DMDatos.ADOQueryFactura.Prior;
+    end;
+end;
+//va al dato siguiente
+procedure TForm2.btnSiguienteClick(Sender: TObject);
+begin
+  if GridPage.ActivePage = PAlbaranes then
+    begin
+       DMDatos.ADOQueryAlbaran.Next;
+    end
+  else if GridPage.ActivePage = PFacturas then
+    begin
+       DMDatos.ADOQueryFactura.Next;
+    end;
+end;
+//va al ultimo dato
+procedure TForm2.btnUltimoClick(Sender: TObject);
+begin
+  if GridPage.ActivePage = PAlbaranes then
+    begin
+       DMDatos.ADOQueryAlbaran.Last;
+    end
+  else if GridPage.ActivePage = PFacturas then
+    begin
+       DMDatos.ADOQueryFactura.Last;
+    end;
+end;
+
+//Para activar la pantalla correcta
+procedure TForm2.ComboBox1Change(Sender: TObject);
+begin
+ if Form2.ComboBox1.ItemIndex = 0 then
+   begin
+    Form2.GridPage.ActivePage := PAlbaranes;
+   end
+ else if Form2.ComboBox1.ItemIndex = 1 then
+      begin
+        Form2.GridPage.ActivePage := PFacturas;
+      end;
+end;
+
+
+end.
