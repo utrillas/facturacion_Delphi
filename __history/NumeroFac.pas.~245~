@@ -22,7 +22,6 @@ type
     Label1: TLabel;
     EdCodigoCliente: TEdit;
     AlbaranTexto: TLabel;
-    CBNombreFac: TComboBox;
     procedure btnAceptarNFacClick(Sender: TObject);
     function NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
     function BorrarUnContador():Integer;
@@ -50,7 +49,7 @@ var
   Ejercicio, NombreFac, Serie, numero_FacStr, currentDate, cliente_Str: String;
 begin
   Ejercicio := EdEjercicio.Text;
-  NombreFac := CBNombreFac.Text;
+  NombreFac := AlbaranTexto.Caption;
   Serie := CBSerieFac.Text;
   conexion := DMDatos.ADOQueryAlbaran;
   cliente:=  StrToInt(EdCodigoCliente.Text);
@@ -58,7 +57,7 @@ begin
 
 
   // insertar nuevo Albaran
-  if CBNombreFac.ItemIndex = 0 then
+  if EdCodigoCliente.Text = '' then
   begin
     numero_Fac:= NumeroContador(Ejercicio, NombreFac, Serie);
     if IntToStr(numero_Fac) <> '' then
@@ -68,6 +67,7 @@ begin
           currentDate := FormatDateTime ('yyyy-mm-dd', Now);
           numero_FacStr := IntToStr(numero_Fac);
           cliente_Str:= IntToStr(cliente);
+          showmessage('hola');
           conexion2.Open;
           conexion2.SQL.Clear;
           conexion2.SQL.Text :=
@@ -81,7 +81,8 @@ begin
                 cliente_Str + ')';
                 showmessage(conexion2.SQL.Text);
           conexion2.ExecSQL;
-          form2.VisibilizarTabla();
+          showmessage('Se ha introducido correctamente el albarán');
+          //form2.VisibilizarTabla();
       end
       else
       begin
@@ -146,7 +147,7 @@ var numero_Fac, numero_Fac_New: Integer;
     conexion, conexion2: TADOQuery;
 begin
  Ejercicio := EdEjercicio.Text;
- NombreFac := CBNombreFac.Text;
+ NombreFac := AlbaranTexto.Caption;
  Serie := CBSerieFac.Text;
  conexion:= DMDatos.ADOQueryContador;
  conexion2:= DMDatos.ADOQCalculos;

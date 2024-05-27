@@ -4552,7 +4552,7 @@ object Form2: TForm2
       Top = 1
       Width = 817
       Height = 403
-      ActivePage = PFacturas
+      ActivePage = PAlbaranes
       Align = alClient
       TabOrder = 0
       ExplicitWidth = 811

@@ -22,10 +22,7 @@ type
     Label1: TLabel;
     EdCodigoCliente: TEdit;
     AlbaranTexto: TLabel;
-    CBNombreFac: TComboBox;
-    CheckEjercicio: TCheckBox;
     procedure btnAceptarNFacClick(Sender: TObject);
-    procedure CheckEjercicioClick(Sender: TObject);
     function NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
     function BorrarUnContador():Integer;
   private
@@ -52,7 +49,7 @@ var
   Ejercicio, NombreFac, Serie, numero_FacStr, currentDate, cliente_Str: String;
 begin
   Ejercicio := EdEjercicio.Text;
-  NombreFac := CBNombreFac.Text;
+  NombreFac := AlbaranTexto.Caption;
   Serie := CBSerieFac.Text;
   conexion := DMDatos.ADOQueryAlbaran;
   cliente:=  StrToInt(EdCodigoCliente.Text);
@@ -60,8 +57,7 @@ begin
 
 
   // insertar nuevo Albaran
-  if CBNombreFac.ItemIndex = 0 then
-  begin
+
     numero_Fac:= NumeroContador(Ejercicio, NombreFac, Serie);
     if IntToStr(numero_Fac) <> '' then
     begin
@@ -70,6 +66,7 @@ begin
           currentDate := FormatDateTime ('yyyy-mm-dd', Now);
           numero_FacStr := IntToStr(numero_Fac);
           cliente_Str:= IntToStr(cliente);
+          showmessage('hola');
           conexion2.Open;
           conexion2.SQL.Clear;
           conexion2.SQL.Text :=
@@ -83,7 +80,8 @@ begin
                 cliente_Str + ')';
                 showmessage(conexion2.SQL.Text);
           conexion2.ExecSQL;
-          form2.VisibilizarTabla();
+          showmessage('Se ha introducido correctamente el albarán');
+          //form2.VisibilizarTabla();
       end
       else
       begin
@@ -96,20 +94,12 @@ begin
       Showmessage('El número de albarán no es válido');
       close;
     end;
-  end;
+
 
   CBSerieFac.Text := '';
   EdCodigoCliente.Text:= '';
 end;
 
-// para que solamente se quede la fecha permamente
-procedure TFNumeroFac.CheckEjercicioClick(Sender: TObject);
-begin
-  if CheckEjercicio.Checked = True then
-  begin
-    EdEjercicio.ReadOnly := True;
-  end;
-end;
 
 function TFNumeroFac.NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
 var
@@ -152,11 +142,11 @@ end;
 
 function TFNumeroFac.BorrarUnContador: Integer;
 var Ejercicio, NombreFac, Serie : String;
-var numero_Fac: Integer;
+var numero_Fac, numero_Fac_New: Integer;
     conexion, conexion2: TADOQuery;
 begin
  Ejercicio := EdEjercicio.Text;
- NombreFac := CBNombreFac.Text;
+ NombreFac := AlbaranTexto.Caption;
  Serie := CBSerieFac.Text;
  conexion:= DMDatos.ADOQueryContador;
  conexion2:= DMDatos.ADOQCalculos;
@@ -170,7 +160,7 @@ begin
       begin
         Form2.DarConexion.Delete;
         ShowMessage('Se ha borrado la factura número : '+ numero_Fac.ToString);
-        numero_Fac := numero_Fac -1;
+        numero_Fac_new := numero_Fac -1;
         conexion2.SQL.Clear;
         conexion2.SQL.Text := 'UPDATE contador ' + 'SET numero = ' + IntToStr(numero_Fac_New) +
                                              ' WHERE Ejercicio = '+ EdEjercicio.Text +

@@ -46,7 +46,7 @@ type
     function DarConexion(): TADOQuery;
     procedure btnDeleteClick(Sender: TObject);
     procedure btnRefrescarClick(Sender: TObject);
-    //function VisibilizarTabla(): String;
+    function VisibilizarTabla(): String;
     function DarTabla(): String;
     procedure btnSalirClick(Sender: TObject);
     procedure btnAgregarLineaClick(Sender: TObject);
@@ -79,7 +79,7 @@ procedure TForm2.FormCreate(Sender: TObject);
 begin
   IniciarConexion();
   DarConexion();
-  //VisibilizarTabla();
+  VisibilizarTabla();
 end;
 //Busqueda de parámetros
 function TForm2.DarBusqueda: String;
@@ -195,7 +195,7 @@ begin
 end;
 
 //Función para que nos muestre las tablas
-{function TForm2.VisibilizarTabla: String;
+function TForm2.VisibilizarTabla: String;
 var conexion: TADOQuery;
 var tabla : String;
     puntero:Tbookmark;
@@ -221,7 +221,7 @@ begin
     conexion.Open;
     conexion.GotoBookmark(Puntero);
 
-end;  }
+end;
 //Abre el Form de las lineas
 procedure TForm2.btnAgregarLineaClick(Sender: TObject);
 begin
@@ -285,7 +285,7 @@ end;
 //Botón para refrescar la tabla
 procedure TForm2.btnRefrescarClick(Sender: TObject);
 begin
-    //VisibilizarTabla();
+    VisibilizarTabla();
 end;
 //va a un dato anterior
 procedure TForm2.btnRetrocederClick(Sender: TObject);

@@ -57,8 +57,7 @@ begin
 
 
   // insertar nuevo Albaran
-  if EdCodigoCliente.Text = '' then
-  begin
+
     numero_Fac:= NumeroContador(Ejercicio, NombreFac, Serie);
     if IntToStr(numero_Fac) <> '' then
     begin
@@ -67,7 +66,7 @@ begin
           currentDate := FormatDateTime ('yyyy-mm-dd', Now);
           numero_FacStr := IntToStr(numero_Fac);
           cliente_Str:= IntToStr(cliente);
-          conexion2.Open;
+          showmessage('hola');
           conexion2.SQL.Clear;
           conexion2.SQL.Text :=
                 'INSERT INTO Albaran (Ejercicio, Nombre, Serie, numero_Al, fecha, numero_cliente) ' +
@@ -80,6 +79,7 @@ begin
                 cliente_Str + ')';
                 showmessage(conexion2.SQL.Text);
           conexion2.ExecSQL;
+          showmessage('Se ha introducido correctamente el albarán');
           //form2.VisibilizarTabla();
       end
       else
@@ -93,10 +93,11 @@ begin
       Showmessage('El número de albarán no es válido');
       close;
     end;
-  end;
+
 
   CBSerieFac.Text := '';
   EdCodigoCliente.Text:= '';
+  exit;
 end;
 
 
