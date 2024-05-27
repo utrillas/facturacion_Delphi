@@ -1,6 +1,7 @@
 object DMDatos: TDMDatos
-  Height = 600
-  Width = 800
+  Height = 750
+  Width = 1000
+  PixelsPerInch = 120
   object ADOConnection1: TADOConnection
     Connected = True
     ConnectionString = 
@@ -9,38 +10,38 @@ object DMDatos: TDMDatos
       'TRILLAS\SQLEXPRESS'
     LoginPrompt = False
     Provider = 'SQLOLEDB.1'
-    Left = 237
-    Top = 26
+    Left = 296
+    Top = 33
   end
   object DataSourceProducto: TDataSource
     DataSet = ADOQueryProducto
-    Left = 58
-    Top = 122
+    Left = 73
+    Top = 153
   end
   object DataSourceCliente: TDataSource
     DataSet = ADOQueryCliente
-    Left = 166
-    Top = 122
+    Left = 208
+    Top = 153
   end
   object DataSourceFactura: TDataSource
     DataSet = ADOQueryFactura
-    Left = 275
-    Top = 122
+    Left = 344
+    Top = 153
   end
   object DataSourceAlbaran: TDataSource
     DataSet = ADOQueryAlbaran
-    Left = 384
-    Top = 122
+    Left = 480
+    Top = 153
   end
   object DataSourceLineaAlbaran: TDataSource
     DataSet = ADOQueryLiAl
-    Left = 512
-    Top = 122
+    Left = 640
+    Top = 153
   end
   object DataSourceLineaFactura: TDataSource
     DataSet = ADOQueryLiFa
-    Left = 653
-    Top = 122
+    Left = 816
+    Top = 153
   end
   object ADOQueryProducto: TADOQuery
     Active = True
@@ -49,8 +50,8 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'Select * from Producto')
-    Left = 51
-    Top = 230
+    Left = 64
+    Top = 288
   end
   object ADOQueryCliente: TADOQuery
     Active = True
@@ -59,8 +60,8 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'Select * from Cliente')
-    Left = 160
-    Top = 230
+    Left = 200
+    Top = 288
   end
   object ADOQueryFactura: TADOQuery
     Active = True
@@ -69,8 +70,8 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'Select * from Factura')
-    Left = 275
-    Top = 230
+    Left = 344
+    Top = 288
   end
   object ADOQueryAlbaran: TADOQuery
     Active = True
@@ -79,8 +80,8 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'Select * from Albaran')
-    Left = 384
-    Top = 230
+    Left = 480
+    Top = 288
   end
   object ADOQueryLiAl: TADOQuery
     Active = True
@@ -89,8 +90,8 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'Select * from lineas_albaran')
-    Left = 518
-    Top = 230
+    Left = 648
+    Top = 288
   end
   object ADOQueryLiFa: TADOQuery
     Active = True
@@ -99,19 +100,19 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'Select * from linea_factura')
-    Left = 614
-    Top = 230
+    Left = 768
+    Top = 288
   end
   object ADOQCalculos: TADOQuery
     Connection = ADOConnection1
     Parameters = <>
-    Left = 294
-    Top = 365
+    Left = 368
+    Top = 456
   end
   object DataSourceContador: TDataSource
     DataSet = ADOQueryContador
-    Left = 493
-    Top = 352
+    Left = 616
+    Top = 440
   end
   object ADOQueryContador: TADOQuery
     Active = True
@@ -120,8 +121,8 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'select * from Contador')
-    Left = 627
-    Top = 352
+    Left = 784
+    Top = 440
   end
   object ADOQHayLineas: TADOQuery
     Active = True
@@ -130,7 +131,7 @@ object DMDatos: TDMDatos
     Parameters = <>
     SQL.Strings = (
       'Select * from lineas_albaran')
-    Left = 717
-    Top = 230
+    Left = 896
+    Top = 288
   end
 end

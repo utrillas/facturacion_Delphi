@@ -13,18 +13,16 @@ type
     LEjercicioFac: TLabel;
     EdEjercicio: TEdit;
     LNombreFac: TLabel;
-    CBNombreFac: TComboBox;
     LSerieFac: TLabel;
     CBSerieFac: TComboBox;
     Panel1: TPanel;
     Panel2: TPanel;
     ChechEjercicio: TPanel;
     btnAceptarNFac: TSpeedButton;
-    CheckEjercicio: TCheckBox;
     Label1: TLabel;
     EdCodigoCliente: TEdit;
+    AlbaranTexto: TLabel;
     procedure btnAceptarNFacClick(Sender: TObject);
-    procedure CheckEjercicioClick(Sender: TObject);
     function NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
     function BorrarUnContador():Integer;
   private
@@ -44,39 +42,51 @@ uses Albaran, DatosDM, Facturacion, lineas_facturas;
 
 procedure TFNumeroFac.btnAceptarNFacClick(Sender: TObject);
 var
-  conexion: TADOQuery;
+  conexion, conexion2: TADOQuery;
 var
-  numero_Fac: Integer;
+  numero_Fac, Cliente: Integer;
 var
-  Ejercicio, NombreFac, Serie, Cliente, numero_FacStr, currentDate : String;
+  Ejercicio, NombreFac, Serie, numero_FacStr, currentDate, cliente_Str: String;
 begin
   Ejercicio := EdEjercicio.Text;
-  NombreFac := CBNombreFac.Text;
+  NombreFac := AlbaranTexto.Caption;
   Serie := CBSerieFac.Text;
   conexion := DMDatos.ADOQueryAlbaran;
-  cliente:=  EdCodigoCliente.Text;
-  currentDate := FormatDateTime ('yyyy-mm-dd', Now);
-  numero_Fac:= NumeroContador(Ejercicio, NombreFac, Serie);
-  numero_FacStr := IntToStr(numero_Fac);
+  cliente:=  StrToInt(EdCodigoCliente.Text);
+  conexion2:= DMDatos.ADOQCalculos;
+
 
   // insertar nuevo Albaran
-  if CBNombreFac.ItemIndex = 0 then
+  if EdCodigoCliente.Text = '' then
   begin
-    if numero_FacStr <> '' then
+    numero_Fac:= NumeroContador(Ejercicio, NombreFac, Serie);
+    if IntToStr(numero_Fac) <> '' then
     begin
-      ShowMessage(Ejercicio +'/' +NombreFac+'/'+ Serie+'/'+ numero_FacStr+'/'+ cliente);
-      conexion.SQL.Clear;
-      conexion.SQL.Text :=
-        'INSERT INTO Albaran (Ejercicio, Nombre, Serie, numero_Al, fecha, numero_cliente)' + 'VALUES (' +
-        QuotedStr(Ejercicio) + ', ' +
-        QuotedStr(NombreFac) + ' , ' +
-        QuotedStr(Serie) + ', ' +
-        QuotedStr(numero_FacStr) + ',' +
-        QuotedStr(currentDate) + ', ' +
-        QuotedStr(cliente) + ' ) ';
-      showmessage(conexion.SQL.Text);
-      conexion.ExecSQL;
-      form2.VisibilizarTabla();
+      if TryStrToInt(EdCodigoCliente.Text, cliente) then
+      begin
+          currentDate := FormatDateTime ('yyyy-mm-dd', Now);
+          numero_FacStr := IntToStr(numero_Fac);
+          cliente_Str:= IntToStr(cliente);
+          conexion2.Open;
+          conexion2.SQL.Clear;
+          conexion2.SQL.Text :=
+                'INSERT INTO Albaran (Ejercicio, Nombre, Serie, numero_Al, fecha, numero_cliente) ' +
+                'VALUES (' +
+                QuotedStr(Ejercicio) + ', ' +
+                QuotedStr(NombreFac) + ', ' +
+                QuotedStr(Serie) + ', ' +
+                numero_FacStr + ', ' +
+                QuotedStr(currentDate) + ', ' +
+                cliente_Str + ')';
+                showmessage(conexion2.SQL.Text);
+          conexion2.ExecSQL;
+          //form2.VisibilizarTabla();
+      end
+      else
+      begin
+        showmessage('El numero de cliente no existe');
+      end;
+
     end
     else
     begin
@@ -89,29 +99,20 @@ begin
   EdCodigoCliente.Text:= '';
 end;
 
-// para que solamente se quede la fecha permamente
-procedure TFNumeroFac.CheckEjercicioClick(Sender: TObject);
-begin
-  if CheckEjercicio.Checked = True then
-  begin
-    EdEjercicio.ReadOnly := True;
-  end;
-end;
 
 function TFNumeroFac.NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
 var
   numero_Fac, numero_Fac_New: Integer;
-  conexion, conexion2: TADOQuery;
+  conexion: TADOQuery;
 begin
 conexion:= DMDatos.ADOQueryContador;
-conexion2:= DMDatos.ADOQueryContador;
   if not conexion.Active then
     conexion.Open;
 
-  if conexion2.Locate('Ejercicio; Nombre; Serie',
+  if conexion.Locate('Ejercicio; Nombre; Serie',
     VarArrayOf([Ejercicio, Nombre, Serie]), []) then
   begin
-    numero_Fac := conexion2.FieldByName('numero').AsInteger;
+    numero_Fac := conexion.FieldByName('numero').AsInteger;
   end
   else
   begin
@@ -141,36 +142,35 @@ end;
 function TFNumeroFac.BorrarUnContador: Integer;
 var Ejercicio, NombreFac, Serie : String;
 var numero_Fac, numero_Fac_New: Integer;
+    conexion, conexion2: TADOQuery;
 begin
  Ejercicio := EdEjercicio.Text;
- NombreFac := CBNombreFac.Text;
+ NombreFac := AlbaranTexto.Caption;
  Serie := CBSerieFac.Text;
+ conexion:= DMDatos.ADOQueryContador;
+ conexion2:= DMDatos.ADOQCalculos;
   if DMDatos.ADOQueryContador.Locate('Ejercicio; Nombre; serie',
     VarArrayOf([Ejercicio, NombreFac, Serie]), []) then
   begin
-    DMDatos.ADOQueryContador.Last;
-    numero_Fac := DMDatos.ADOQueryContador.FieldByName('numero').AsInteger;
+    conexion.Last;
+    numero_Fac := conexion.FieldByName('numero').AsInteger;
 
     if MessageDlg('¿Quiere borrar la factura número ' + numero_Fac.ToString + '?',mtConfirmation, [mbYes, mbNo], 0) = mrYes then
       begin
         Form2.DarConexion.Delete;
         ShowMessage('Se ha borrado la factura número : '+ numero_Fac.ToString);
-        numero_Fac := numero_Fac -1;
-        DMDatos.ADOQueryContador.SQL.Clear;
-        DMDatos.ADOQueryContador.SQL.Text := 'UPDATE contador ' + 'SET numero = ' + IntToStr(numero_Fac_New) +
+        numero_Fac_new := numero_Fac -1;
+        conexion2.SQL.Clear;
+        conexion2.SQL.Text := 'UPDATE contador ' + 'SET numero = ' + IntToStr(numero_Fac_New) +
                                              ' WHERE Ejercicio = '+ EdEjercicio.Text +
                                              ' AND Nombre = ' + QuotedStr(NombreFac) +
                                              ' AND Serie = ' + CBSerieFac.Text;
-        DMDatos.ADOQueryContador.ExecSQL;
+        conexion2.ExecSQL;
       end
       else
       begin
         close;
       end;
-
   end;
-
-
 end;
-
 end.

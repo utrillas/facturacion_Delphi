@@ -117,7 +117,6 @@ end;
 procedure TLineaAlbaran.FormCreate(Sender: TObject);
 begin
   DPAlbaran.Date:= now;
-  Form2.VisibilizarTabla();
 end;
 
 //Función que nos dice si hay lineas
@@ -261,7 +260,6 @@ begin
   //limpiar los edits
   EdNombreCliente.Text:= '';
   EdCantidad.Text:= '';
-  Form2.VisibilizarTabla();
 end;
 
 
@@ -290,7 +288,7 @@ numero_Al:= StrToInt(EDnAlbaran.Text);
       conexion.ExecSQL;
     end;
     //refrescar la tabla
-  Form2.VisibilizarTabla();
+
 end;
 
 //refrescar tablas
