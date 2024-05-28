@@ -207,7 +207,6 @@ begin
       end
     else if GridPage.ActivePage = PFacturas then
       begin
-      showmessage('factura');
         conexion:= DMDatos.ADOQueryFactura;
         tabla:= 'Factura';
       end;
@@ -221,6 +220,7 @@ begin
     conexion.GotoBookmark(Puntero);
 
 end;
+
 //Abre el Form de las lineas
 procedure TForm2.btnAgregarLineaClick(Sender: TObject);
 begin

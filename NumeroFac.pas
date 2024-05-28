@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons,
-  Data.Win.ADODB;
+  Data.Win.ADODB, DateUtils;
 
 type
   TFNumeroFac = class(TForm)
@@ -17,14 +17,16 @@ type
     CBSerieFac: TComboBox;
     Panel1: TPanel;
     Panel2: TPanel;
-    ChechEjercicio: TPanel;
+    btnYear: TPanel;
     btnAceptarNFac: TSpeedButton;
     Label1: TLabel;
     EdCodigoCliente: TEdit;
     AlbaranTexto: TLabel;
+    SpeedButton1: TSpeedButton;
     procedure btnAceptarNFacClick(Sender: TObject);
     function NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
     function BorrarUnContador():Integer;
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -76,7 +78,6 @@ begin
                 numero_FacStr + ', ' +
                 QuotedStr(currentDate) + ', ' +
                 cliente_Str + ')';
-                showmessage(conexion2.SQL.Text);
           conexion2.ExecSQL;
           showmessage('Se ha introducido correctamente el albarán');
           form2.VisibilizarTabla();
@@ -96,16 +97,17 @@ begin
 
   CBSerieFac.Text := '';
   EdCodigoCliente.Text:= '';
-  exit;
+  close;
 end;
 
 
 function TFNumeroFac.NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
 var
   numero_Fac, numero_Fac_New: Integer;
-  conexion: TADOQuery;
+  conexion, conexion2: TADOQuery;
 begin
 conexion:= DMDatos.ADOQueryContador;
+conexion2:= DMDatos.ADOQCalculos;
   if not conexion.Active then
     conexion.Open;
 
@@ -117,12 +119,12 @@ conexion:= DMDatos.ADOQueryContador;
   else
   begin
     numero_Fac := 1;
-    conexion.SQL.Clear;
-    conexion.SQL.Text :=
+    conexion2.SQL.Clear;
+    conexion2.SQL.Text :=
       'INSERT INTO Contador (Ejercicio, Nombre, Serie, numero) VALUES (' +
       QuotedStr(Ejercicio) + ' , ' + QuotedStr(Nombre) + ' , ' + QuotedStr(Serie) + ' , ' +
       IntToStr(numero_Fac) + ')';
-    conexion.ExecSQL;
+    conexion2.ExecSQL;
   end;
 
   Result := numero_Fac;
@@ -130,14 +132,19 @@ conexion:= DMDatos.ADOQueryContador;
   // Sumar un 1 al contador
   numero_Fac_New := numero_Fac + 1;
 
- conexion.SQL.Clear;
- conexion.SQL.Text := 'UPDATE Contador SET numero = ' + IntToStr(numero_Fac_New) +
+ conexion2.SQL.Clear;
+ conexion2.SQL.Text := 'UPDATE Contador SET numero = ' + IntToStr(numero_Fac_New) +
                                        ' WHERE Ejercicio = ' + QuotedStr(Ejercicio) +
                                        ' AND Nombre = ' + QuotedStr(Nombre) +
                                        ' AND Serie = ' + QuotedStr(Serie);
-  conexion.ExecSQL;
+  conexion2.ExecSQL;
 end;
 
+//para tener el año actual
+procedure TFNumeroFac.SpeedButton1Click(Sender: TObject);
+begin
+   EdEjercicio.Text:= IntToStr(YearOf(Now));
+end;
 
 function TFNumeroFac.BorrarUnContador: Integer;
 var Ejercicio, NombreFac, Serie : String;

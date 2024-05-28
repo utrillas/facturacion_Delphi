@@ -54,7 +54,8 @@ type
     procedure btnReAlClick(Sender: TObject);
     procedure CheckFacturarClick(Sender: TObject);
     function CodigoProducto(descripcion_pro : String) : Integer;
-    function RefrescarLineas(): String;
+    procedure RefrescarLineas();
+    procedure contarLineas();
 
   private
     { Private declarations }
@@ -145,9 +146,8 @@ begin
     Result := False;
 end;
 
-function TLineaAlbaran.RefrescarLineas: String;
+procedure TLineaAlbaran.RefrescarLineas;
 var Ejercicio, Serie, numero_Al:  String;
-//var numero_Al: Integer;
 var conexion: TADOQuery;
 begin
   Ejercicio := DBEjercicioAl.Text;
@@ -158,9 +158,9 @@ begin
   if DBEjercicioAl.Text <> '' then
   begin
     conexion.SQL.Clear;
-    conexion.SQL.Text:= 'SELECT * FROM lineas_albaran WHERE Ejercicio = ' + Ejercicio +
-                              ' AND Serie = '+ Serie +
-                              ' AND numero_Al = ' + numero_Al ;
+    conexion.SQL.Text:= 'SELECT * FROM lineas_albaran WHERE Ejercicio = ' + QuotedStr(Ejercicio) +
+                              ' AND Serie = '+ QuotedStr(Serie) +
+                              ' AND numero_Al = ' + QuotedStr(numero_Al) ;
     conexion.Open;
   end;
 end;
@@ -192,9 +192,30 @@ begin
 end;
 
 
+procedure TLineaAlbaran.contarLineas;
+var conexion: TADOQuery;
+//var numero_Al: Integer;
+var  Ejercicio, Nombre, Serie, numero_Al: string;
+begin
+  conexion:= DMDatos.ADOQCalculos;
+  Ejercicio := DBEjercicioAl.Text;
+  Serie := DBSerieAl.Text;
+  numero_Al:= EDnAlbaran.Text;
+     //contar el número de lineas que hay
+     conexion.SQL.Clear;
+     conexion.SQL.Text:= 'UPDATE Albaran ' +
+                          'SET numero_lineas = (SELECT COUNT(*) FROM lineas_albaran WHERE Ejercicio = ' + QuotedStr(Ejercicio) +
+                          ' AND Serie = '+ QuotedStr(Serie) +
+                          ' and numero_Al = ' + QuotedStr(numero_Al)   + ' ) ' +
+                          'WHERE Ejercicio = ' + QuotedStr(Ejercicio) +
+                          ' AND Serie = '+ QuotedStr(Serie) +
+                          ' and numero_Al = ' + QuotedStr(numero_Al) ;
+     conexion.ExecSQL;
+end;
+
 //Añadir linea
 procedure TLineaAlbaran.btnAgregarClick(Sender: TObject);
-var conexion2: TADOQuery;
+var conexion2, conexion: TADOQuery;
 var codigo_producto, numero_Al, contador, numero_lineas: Integer;
 var descripcion_pro, cantidad_str, Ejercicio, Nombre, Serie: string;
 var cantidad: Double;
@@ -202,6 +223,7 @@ var HayLineas : Boolean;
 begin
 
   conexion2:= DMDatos.ADOQCalculos;
+  conexion:= DMDatos.ADOQueryAlbaran;
   descripcion_pro :=CBProducto.Text;
   cantidad:= StrToFloat(EdCantidad.Text);
   cantidad_str:= StringReplace(EdCantidad.Text,',','.',[rfReplaceAll]);
@@ -210,54 +232,36 @@ begin
   Ejercicio := DBEjercicioAl.Text;
   Serie := DBSerieAl.Text;
   EdCantidad.Text:= '';
-  begin
+
+
+    //insertar linea en el albaran
+    if (descripcion_pro = '') AND (cantidad = 0)  then
+      begin
+        Showmessage('Seleccione producto y/o introduzca cantidad');
+        exit;
+      end;
     //conseguir codigo producto
     codigo_producto:= CodigoProducto(descripcion_pro);
     //determinar las lineas que hay en el pedido
     numero_lineas := UltimoRegistro(numero_Al) + 1;
-    //insertar linea en el albaran
-    if descripcion_pro <> '' then
-      begin
-        if cantidad <> 0 then
-          begin
-            conexion2.SQL.Clear;
-            conexion2.SQL.Text := 'INSERT INTO lineas_albaran (Ejercicio, Serie, numero_Al, numero_linea, codigo_producto, descripcion, cantidad)' +
-                                  'VALUES ( ' +
-                                  QuotedStr(Ejercicio) + ', '+
-                                  Serie + ' , ' +
-                                  numero_Al.ToString + ' , ' +
-                                  numero_lineas.ToString + ' , ' +
-                                  codigo_producto.ToString + ' , ' +
-                                  QuotedStr(descripcion_pro) + ' , ' +
-                                  QuotedStr(cantidad_str) + ') ';
-              conexion2.ExecSQL;
-          end
-        else
-          begin
-             showmessage('Introduzca cantidad de producto');
-          end;
-      end
-    else
-      begin
-        Showmessage('Seleccione producto');
-      end;
 
-   //contar el número de lineas que hay
-     conexion2.SQL.Clear;
-     conexion2.SQL.Text:= 'UPDATE Albaran ' +
-                          'SET numero_lineas = (SELECT COUNT(*) FROM lineas_albaran WHERE Ejercicio = ' + Ejercicio +
-                          ' AND Serie = '+ Serie +
-                          ' and numero_Al = ' + numero_Al.ToString   + ' ) ' +
-                          'WHERE Ejercicio = ' + Ejercicio +
-                          ' AND Serie = '+ Serie +
-                          ' and numero_Al = ' + numero_Al.ToString ;
-     conexion2.ExecSQL;
-    //volver a enseñar el listado completo del albaran
-   RefrescarLineas();
-  end;
-  //limpiar los edits
-  EdNombreCliente.Text:= '';
-  EdCantidad.Text:= '';
+    conexion2.SQL.Clear;
+    conexion2.SQL.Text := 'INSERT INTO lineas_albaran (Ejercicio, Serie, numero_Al, numero_linea, codigo_producto, descripcion, cantidad)' +
+                          'VALUES ( ' +
+                          QuotedStr(Ejercicio) + ', '+
+                          Serie + ' , ' +
+                          numero_Al.ToString + ' , ' +
+                          numero_lineas.ToString + ' , ' +
+                          codigo_producto.ToString + ' , ' +
+                          QuotedStr(descripcion_pro) + ' , ' +
+                          QuotedStr(cantidad_str) + ') ';
+      conexion2.ExecSQL;
+
+
+     RefrescarLineas();
+     contarLineas();
+
+
 end;
 
 
