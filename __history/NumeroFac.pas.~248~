@@ -22,7 +22,6 @@ type
     Label1: TLabel;
     EdCodigoCliente: TEdit;
     AlbaranTexto: TLabel;
-    CBNombreFac: TComboBox;
     procedure btnAceptarNFacClick(Sender: TObject);
     function NumeroContador(Ejercicio, Nombre, Serie: String): Integer;
     function BorrarUnContador():Integer;
@@ -58,8 +57,7 @@ begin
 
 
   // insertar nuevo Albaran
-  if CBNombreFac.ItemIndex = 0 then
-  begin
+
     numero_Fac:= NumeroContador(Ejercicio, NombreFac, Serie);
     if IntToStr(numero_Fac) <> '' then
     begin
@@ -68,7 +66,7 @@ begin
           currentDate := FormatDateTime ('yyyy-mm-dd', Now);
           numero_FacStr := IntToStr(numero_Fac);
           cliente_Str:= IntToStr(cliente);
-          conexion2.Open;
+          showmessage('hola');
           conexion2.SQL.Clear;
           conexion2.SQL.Text :=
                 'INSERT INTO Albaran (Ejercicio, Nombre, Serie, numero_Al, fecha, numero_cliente) ' +
@@ -81,7 +79,8 @@ begin
                 cliente_Str + ')';
                 showmessage(conexion2.SQL.Text);
           conexion2.ExecSQL;
-          form2.VisibilizarTabla();
+          showmessage('Se ha introducido correctamente el albarán');
+          //form2.VisibilizarTabla();
       end
       else
       begin
@@ -94,10 +93,11 @@ begin
       Showmessage('El número de albarán no es válido');
       close;
     end;
-  end;
+
 
   CBSerieFac.Text := '';
   EdCodigoCliente.Text:= '';
+  exit;
 end;
 
 

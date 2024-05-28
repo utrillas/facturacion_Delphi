@@ -27,7 +27,7 @@ object FNumeroFac: TFNumeroFac
     ParentBackground = False
     ParentFont = False
     TabOrder = 0
-    ExplicitWidth = 307
+    ExplicitWidth = 301
   end
   object Panel2: TPanel
     Left = 0
@@ -38,12 +38,12 @@ object FNumeroFac: TFNumeroFac
     Color = clCream
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 335
-    ExplicitWidth = 307
+    ExplicitTop = 326
+    ExplicitWidth = 301
     object btnAceptarNFac: TSpeedButton
       Left = 1
       Top = 6
-      Width = 309
+      Width = 303
       Height = 53
       Align = alBottom
       Glyph.Data = {
@@ -180,6 +180,7 @@ object FNumeroFac: TFNumeroFac
         FF00FFFFFF00}
       OnClick = btnAceptarNFacClick
       ExplicitLeft = 0
+      ExplicitWidth = 309
     end
   end
   object ChechEjercicio: TPanel
@@ -191,8 +192,8 @@ object FNumeroFac: TFNumeroFac
     Color = clInactiveBorder
     ParentBackground = False
     TabOrder = 2
-    ExplicitWidth = 307
-    ExplicitHeight = 294
+    ExplicitWidth = 301
+    ExplicitHeight = 285
     object LEjercicioFac: TLabel
       Left = 24
       Top = 59

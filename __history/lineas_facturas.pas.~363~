@@ -117,40 +117,61 @@ end;
 procedure TFacturas.btnAgregarFacturaClick(Sender: TObject);
 var
   numero_Fa, iva, codigo_producto, num_linea: Integer;
-var
   Precio, ETotalFactura, Descuento, PrecioT, cantidad, total_facturaQ: Double;
-var
   Precio_Str, Descuento_str, PrecioT_str, total_factura_str, numero_Al,
-    PrecioT_Sstr, cantidad_str, eleccion, total_factura: String;
-var
+    PrecioT_Sstr, cantidad_str, eleccion, total_factura, Ejercicio, Serie: String;
   conexion, conexion2: TADOQuery;
-var
-  puntero: Tbookmark;
-var
+  puntero: TBookmark;
   fecha: TDate;
+  FormatSettings: TFormatSettings;
 begin
-  codigo_producto := StrToInt(LineaAlbaran.EdCodigo.Text);
-  numero_Fa := StrToInt(ENumFactura.Text);
-  Descuento := StrToFloat(EDescuento.Text);
-  Precio := StrToFloat(EDTPrecio.Text);
+    Ejercicio:= DBEjercicio.Text;
+    Serie:= DBSerie.Text;
+    codigo_producto := StrToInt(LineaAlbaran.EdCodigo.Text);
+    numero_Fa := StrToInt(ENumFactura.Text);
+    conexion := DMDatos.ADOQueryLiFa;
+    conexion2 := DMDatos.ADOQCalculos;
+    num_linea := StrToInt(EdNumLineaFa.Text);
+    numero_Al := EdNumero_Al.Text;
+    puntero := conexion.GetBookmark;
+    total_facturaQ := 0;
+
+  // Configurar los parámetros de formato para usar punto decimal
+  FormatSettings := TFormatSettings.Create;
+  FormatSettings.DecimalSeparator := '.';
+
+  // Reemplazar tanto comas como puntos para asegurar consistencia
+  Descuento_str := StringReplace(EDescuento.Text, ',', '.', [rfReplaceAll]);
+  Descuento_str := StringReplace(Descuento_str, '.', '.', [rfReplaceAll]);
+
   Precio_Str := StringReplace(EDTPrecio.Text, ',', '.', [rfReplaceAll]);
-  conexion := DMDatos.ADOQueryLiFa;
-  conexion2 := DMDatos.ADOQCalculos;
-  num_linea := StrToInt(EdNumLineaFa.Text);
-  numero_Al := EdNumero_Al.Text;
-  puntero := conexion.GetBookmark;
-  total_facturaQ := 0;
+  Precio_Str := StringReplace(Precio_Str, '.', '.', [rfReplaceAll]);
+
+  try
+    Descuento := StrToFloat(Descuento_str, FormatSettings);
+    Precio := StrToFloat(Precio_Str, FormatSettings);
+    {FormatSettings: Es una variable de tipo TFormatSettings que especifica los ajustes regionales que se usarán durante la conversión.
+       Aquí, se asegura de que el separador decimal sea un punto (.) en lugar de una coma, lo cual es importante para asegurar la
+       compatibilidad con SQL.}
+  except
+    on E: EConvertError do
+    begin
+      ShowMessage('Error al convertir el descuento o el precio: ' + E.Message);
+      Exit;
+    end;
+  end;
+
+
 
   // Insertar datos en la tabla linea_factura
-  if DMDatos.ADOQueryProducto.Locate('codigo_producto', codigo_producto, [])
-  then
+  if DMDatos.ADOQueryProducto.Locate('codigo_producto', codigo_producto, []) then
   begin
     iva := DMDatos.ADOQueryProducto.FieldByName('iva').AsInteger;
   end;
 
-  // buscar la cantidad de producto
+  // Buscar la cantidad de producto
   DMDatos.ADOQueryLiAl.SQL.Text :=
-    'SELECT cantidad from linea_factura where codigo_producto = ' +
+    'SELECT cantidad FROM linea_factura WHERE codigo_producto = ' +
     IntToStr(codigo_producto);
   DMDatos.ADOQueryLiAl.Open;
 
@@ -160,87 +181,75 @@ begin
   end
   else
   begin
-    ShowMessage('No se encontro la cantidad');
+    ShowMessage('No se encontró la cantidad');
+    Exit;
   end;
 
-  // cambiar el formato del descueto
-  if Descuento <> 0 then
-  begin
-    Descuento_str := StringReplace(EDescuento.Text, ',', '.', [rfReplaceAll]);
-  end
-  else
-  begin
-    ShowMessage('No se aplica ningún descuento');
-  end;
-
-  // Hallar el precio de cada producto.
+  // Calcular el precio total del producto con descuento e IVA
   PrecioT := (Precio * cantidad) * (1 - (Descuento / 100)) * (1 + (iva / 100));
-  showmessage(cantidad.ToString);
 
   if PrecioT <> 0 then
   begin
-    PrecioT_str := FloatToStr(PrecioT);
-    PrecioT_Sstr := StringReplace(PrecioT_str, ',', '.', [rfReplaceAll]);
+    PrecioT_str := FloatToStrF(PrecioT, ffFixed, 15, 2, FormatSettings);
+    {ffFixed: Es una constante de enumeración de tipo TFloatFormat que indica que se desea un formato de punto fijo.
+      Esto significa que la conversión se realizará de manera que el resultado tendrá un número fijo de lugares decimales.
+    15: Es el número total de dígitos que se incluirán en la representación de la cadena.
+      Esto incluye todos los dígitos antes y después del punto decimal.
+    2: Es el número de dígitos que se mostrarán después del punto decimal.
+      En este caso, queremos que la cadena resultante tenga exactamente 2 lugares decimales.}
   end
   else
   begin
     ShowMessage('El total da 0');
+    Exit;
   end;
 
-  // introducir datos en linea_factura
+  // Introducir datos en linea_factura
   if numero_Fa <> 0 then
   begin
     conexion.SQL.Clear;
-    conexion.SQL.Text := 'UPDATE linea_factura  ' +
-                          'SET numero_factura = ' + ENumFactura.Text + ', ' +
-                          ' precio_unidad = ' + Precio_Str + ' , ' +
-                          ' precio_total = ' + PrecioT_Sstr + ', ' +
-                          ' descuento = ' + Descuento_str   +
-                          ' WHERE linea_factura = ' + IntToStr(num_linea);
-                          showmessage(conexion.SQL.Text);
+    conexion.SQL.Text := 'UPDATE linea_factura SET ' +
+                         'numero_factura = ' + ENumFactura.Text + ', ' +
+                         'precio_unidad = ' + Precio_Str + ', ' +
+                         'precio_total = ' + PrecioT_str + ', ' +
+                         'descuento = ' + Descuento_str + ' ' +
+                         'WHERE linea_factura = ' + IntToStr(num_linea);
     conexion.ExecSQL;
 
-    // introducir metodo de pago
-    if CBPago.ItemIndex = 1 then
-    begin
-      eleccion := 'Al contado';
-    end
-    else if CBPago.ItemIndex = 2 then
-    begin
-      eleccion := 'Tarjeta';
-    end
-    else if CBPago.ItemIndex = 3 then
-    begin
-      eleccion := 'Pagare 30';
-    end
-    else if CBPago.ItemIndex = 4 then
-    begin
-      eleccion := 'Pagare 60';
-    end
-    else if CBPago.ItemIndex = 5 then
-    begin
-      eleccion := 'Pagare 90';
+    // Determinar el método de pago
+    case CBPago.ItemIndex of
+      1: eleccion := 'Al contado';
+      2: eleccion := 'Tarjeta';
+      3: eleccion := 'Pagare 30';
+      4: eleccion := 'Pagare 60';
+      5: eleccion := 'Pagare 90';
+    else
+      eleccion := '';
     end;
 
-
-
-    // introducir datos en factura
-
+    // Introducir datos en factura
     conexion2.SQL.Clear;
-    conexion2.SQL.Text := 'UPDATE factura ' + ' SET ' +
-      ' fecha = ' + QuotedStr(FormatDateTime('yyyy-mm-dd', NowDateFac.Date)) + ', ' +
-      ' modo_de_pago = ' + QuotedStr(eleccion) +
-      ' WHERE numero_factura = ' + numero_Fa.ToString;
+    conexion2.SQL.Text := 'UPDATE factura SET ' +
+                          'fecha = ' + QuotedStr(FormatDateTime('yyyy-mm-dd', NowDateFac.Date)) + ', ' +
+                          'modo_de_pago = ' + QuotedStr(eleccion) +
+                          ' WHERE Ejercicio = '+ Ejercicio +
+                          ' AND Serie = ' + Serie +
+                          ' AND numero_factura = ' + numero_Fa.ToString;
     conexion2.ExecSQL;
-    // sumar linea
 
+    // Actualizar el número de líneas en la factura
     conexion2.SQL.Clear;
-    conexion2.SQL.Text := 'UPDATE factura ' +
-      'SET numero_lineas = (SELECT COUNT(*) FROM linea_factura WHERE numero_factura = '
-      + numero_Fa.ToString + ' ) ' + 'WHERE numero_factura = ' +
-      numero_Fa.ToString;
-
+    conexion2.SQL.Text := 'UPDATE factura SET numero_lineas = ' +
+                          '(SELECT COUNT(*) FROM linea_factura WHERE Ejercicio = '+ Ejercicio +
+                          ' AND Serie = ' + Serie +
+                          ' AND numero_factura = ' + numero_Fa.ToString + ') ' +
+                          ' WHERE Ejercicio = '+ Ejercicio +
+                          ' AND Serie = ' + Serie +
+                          ' AND numero_factura = ' + numero_Fa.ToString;
+    conexion2.ExecSQL;
     RefrescarLineasFactura();
+    EDTPrecio.Text:= '';
+    EDescuento.Text:= '';
   end;
 end;
 
@@ -311,7 +320,6 @@ begin
                               ' AND numero_factura = ' + numero_Fa.ToString;
         conexion2.ExecSQL;
     end;
-  Form2.VisibilizarTabla();
   RefrescarLineasFactura();
 end;
  procedure TFacturas.btnRefrescarLFacClick(Sender: TObject);
@@ -322,7 +330,6 @@ end;
 // cerrar la pestaña
 procedure TFacturas.btnSalirFacClick(Sender: TObject);
 begin
-  Form2.VisibilizarTabla();
   close;
 end;
 //para que el metodo de pago sea fijo

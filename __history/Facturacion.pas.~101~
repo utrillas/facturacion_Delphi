@@ -207,8 +207,8 @@ begin
         tabla:= 'Albaran';
       end
     else if GridPage.ActivePage = PFacturas then
-
       begin
+        showmessage('facturas');
         conexion:= DMDatos.ADOQueryFactura;
         tabla:= 'Factura';
       end;
@@ -222,6 +222,8 @@ begin
     conexion.GotoBookmark(Puntero);
 
 end;
+
+
 //Abre el Form de las lineas
 procedure TForm2.btnAgregarLineaClick(Sender: TObject);
 begin
@@ -284,8 +286,19 @@ begin
 end;
 //Botón para refrescar la tabla
 procedure TForm2.btnRefrescarClick(Sender: TObject);
+var conexion: TADOQuery;
+var tabla : String;
+    puntero:Tbookmark;
 begin
-    VisibilizarTabla();
+
+    puntero:=conexion.GetBookmark;
+
+
+    //conexion.SQL.Clear;
+    conexion.SQL.Text:='SELECT * FROM albaran ' ;
+    conexion.Open;
+    conexion.GotoBookmark(Puntero);
+
 end;
 //va a un dato anterior
 procedure TForm2.btnRetrocederClick(Sender: TObject);

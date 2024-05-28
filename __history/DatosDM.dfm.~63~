@@ -111,15 +111,27 @@ object DMDatos: TDMDatos
   end
   object DataSourceContador: TDataSource
     DataSet = ADOQueryContador
-    Left = 784
-    Top = 120
+    Left = 616
+    Top = 440
   end
   object ADOQueryContador: TADOQuery
+    Active = True
     Connection = ADOConnection1
+    CursorType = ctStatic
     Parameters = <>
     SQL.Strings = (
       'select * from Contador')
     Left = 784
-    Top = 232
+    Top = 440
+  end
+  object ADOQHayLineas: TADOQuery
+    Active = True
+    Connection = ADOConnection1
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'Select * from lineas_albaran')
+    Left = 896
+    Top = 288
   end
 end

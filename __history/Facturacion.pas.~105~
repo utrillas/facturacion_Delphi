@@ -201,16 +201,15 @@ var tabla : String;
     puntero:Tbookmark;
 begin
     if GridPage.ActivePage = PAlbaranes then
-    begin
-      showmessage('albaran');
-      conexion:= DMDatos.ADOQueryAlbaran;
-      tabla:= 'Albaran';
-    end
-    else
-    begin
-      conexion:= DMDatos.ADOQueryFactura;
-      tabla:= 'Factura';
-    end;
+      begin
+        conexion:= DMDatos.ADOQueryAlbaran;
+        tabla:= 'Albaran';
+      end
+    else if GridPage.ActivePage = PFacturas then
+      begin
+        conexion:= DMDatos.ADOQueryFactura;
+        tabla:= 'Factura';
+      end;
 
     puntero:=conexion.GetBookmark;
 

@@ -2,8 +2,8 @@ object FNumeroFac: TFNumeroFac
   Left = 0
   Top = 0
   Caption = 'Numero Factura'
-  ClientHeight = 396
-  ClientWidth = 311
+  ClientHeight = 387
+  ClientWidth = 305
   Color = clGrayText
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,25 +14,29 @@ object FNumeroFac: TFNumeroFac
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 311
+    Width = 305
     Height = 41
     Align = alTop
     Caption = 'Datos '
+    Color = clCream
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clOlive
     Font.Height = -27
     Font.Name = 'Segoe UI'
     Font.Style = [fsBold, fsItalic]
+    ParentBackground = False
     ParentFont = False
     TabOrder = 0
     ExplicitWidth = 307
   end
   object Panel2: TPanel
     Left = 0
-    Top = 336
-    Width = 311
+    Top = 327
+    Width = 305
     Height = 60
     Align = alBottom
+    Color = clCream
+    ParentBackground = False
     TabOrder = 1
     ExplicitTop = 335
     ExplicitWidth = 307
@@ -181,8 +185,8 @@ object FNumeroFac: TFNumeroFac
   object ChechEjercicio: TPanel
     Left = 0
     Top = 41
-    Width = 311
-    Height = 295
+    Width = 305
+    Height = 286
     Align = alClient
     Color = clInactiveBorder
     ParentBackground = False
@@ -217,21 +221,25 @@ object FNumeroFac: TFNumeroFac
       Height = 15
       Caption = 'Codigo Cliente'
     end
-    object CBNombreFac: TComboBox
-      Left = 104
-      Top = 107
-      Width = 145
+    object AlbaranTexto: TLabel
+      Left = 128
+      Top = 115
+      Width = 63
       Height = 23
-      TabOrder = 0
-      Items.Strings = (
-        'Albaran')
+      Caption = 'Albaran'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object CBSerieFac: TComboBox
-      Left = 104
+      Left = 128
       Top = 169
       Width = 145
       Height = 23
-      TabOrder = 1
+      TabOrder = 0
       Items.Strings = (
         '12'
         '21'
@@ -239,26 +247,18 @@ object FNumeroFac: TFNumeroFac
         '99')
     end
     object EdEjercicio: TEdit
-      Left = 104
-      Top = 51
+      Left = 128
+      Top = 56
       Width = 145
       Height = 23
-      TabOrder = 2
-    end
-    object CheckEjercicio: TCheckBox
-      Left = 255
-      Top = 54
-      Width = 17
-      Height = 17
-      TabOrder = 3
-      OnClick = CheckEjercicioClick
+      TabOrder = 1
     end
     object EdCodigoCliente: TEdit
       Left = 128
       Top = 232
-      Width = 121
+      Width = 137
       Height = 23
-      TabOrder = 4
+      TabOrder = 2
     end
   end
 end

@@ -146,13 +146,13 @@ begin
 end;
 
 function TLineaAlbaran.RefrescarLineas: String;
-var Ejercicio, Serie:  String;
-var numero_Al: Integer;
+var Ejercicio, Serie, numero_Al:  String;
+//var numero_Al: Integer;
 var conexion: TADOQuery;
 begin
   Ejercicio := DBEjercicioAl.Text;
   Serie := DBSerieAl.Text;
-  numero_Al:= StrToInt(EDnAlbaran.text);
+  numero_Al:= EDnAlbaran.text;
   conexion:= DMDatos.ADOQueryLiAl;
 
   if DBEjercicioAl.Text <> '' then
@@ -160,7 +160,7 @@ begin
     conexion.SQL.Clear;
     conexion.SQL.Text:= 'SELECT * FROM lineas_albaran WHERE Ejercicio = ' + Ejercicio +
                               ' AND Serie = '+ Serie +
-                              ' AND numero_Al = ' + numero_Al.ToString  ;
+                              ' AND numero_Al = ' + numero_Al ;
     conexion.Open;
   end;
 end;
@@ -194,14 +194,14 @@ end;
 
 //Añadir linea
 procedure TLineaAlbaran.btnAgregarClick(Sender: TObject);
-var conexion: TADOQuery;
+var conexion2: TADOQuery;
 var codigo_producto, numero_Al, contador, numero_lineas: Integer;
 var descripcion_pro, cantidad_str, Ejercicio, Nombre, Serie: string;
 var cantidad: Double;
 var HayLineas : Boolean;
 begin
 
-  conexion:= DMDatos.ADOQueryLiAl;
+  conexion2:= DMDatos.ADOQCalculos;
   descripcion_pro :=CBProducto.Text;
   cantidad:= StrToFloat(EdCantidad.Text);
   cantidad_str:= StringReplace(EdCantidad.Text,',','.',[rfReplaceAll]);
@@ -214,46 +214,44 @@ begin
     //conseguir codigo producto
     codigo_producto:= CodigoProducto(descripcion_pro);
     //determinar las lineas que hay en el pedido
-    HayLineas := HayRegistros(numero_Al);
-    if HayLineas then
-      numero_lineas := 1
-    else
-    begin
-        numero_lineas := UltimoRegistro(numero_Al) + 1;
-    end;
+    numero_lineas := UltimoRegistro(numero_Al) + 1;
     //insertar linea en el albaran
-    if ejercicio <> null then
+    if descripcion_pro <> '' then
       begin
-        conexion.SQL.Clear;
-        conexion.SQL.Text := 'INSERT INTO lineas_albaran (Ejercicio, Serie, numero_Al, numero_linea, codigo_producto, descripcion, cantidad)' +
-                              'VALUES ( ' +
-                              QuotedStr(Ejercicio) + ', '+
-                              Serie + ' , ' +
-                              numero_Al.ToString + ' , ' +
-                              numero_lineas.ToString + ' , ' +
-                              codigo_producto.ToString + ' , ' +
-                              QuotedStr(descripcion_pro) + ' , ' +
-                              QuotedStr(cantidad_str) + ') ';
-          conexion.ExecSQL;
+        if cantidad <> 0 then
+          begin
+            conexion2.SQL.Clear;
+            conexion2.SQL.Text := 'INSERT INTO lineas_albaran (Ejercicio, Serie, numero_Al, numero_linea, codigo_producto, descripcion, cantidad)' +
+                                  'VALUES ( ' +
+                                  QuotedStr(Ejercicio) + ', '+
+                                  Serie + ' , ' +
+                                  numero_Al.ToString + ' , ' +
+                                  numero_lineas.ToString + ' , ' +
+                                  codigo_producto.ToString + ' , ' +
+                                  QuotedStr(descripcion_pro) + ' , ' +
+                                  QuotedStr(cantidad_str) + ') ';
+              conexion2.ExecSQL;
+          end
+        else
+          begin
+             showmessage('Introduzca cantidad de producto');
+          end;
       end
     else
       begin
-        showMessage('Numero de ejercicio no encontrado');
+        Showmessage('Seleccione producto');
       end;
 
    //contar el número de lineas que hay
-   if numero_Al <> 0 then
-      begin
-         conexion.SQL.Clear;
-         conexion.SQL.Text:= 'UPDATE Albaran ' +
-                              'SET numero_lineas = (SELECT COUNT(*) FROM lineas_albaran WHERE Ejercicio = ' + Ejercicio +
-                              ' AND Serie = '+ Serie +
-                              ' and numero_Al = ' + numero_Al.ToString   + ' ) ' +
-                              'WHERE Ejercicio = ' + Ejercicio +
-                              ' AND Serie = '+ Serie +
-                              ' and numero_Al = ' + numero_Al.ToString ;
-         conexion.ExecSQL;
-      end;
+     conexion2.SQL.Clear;
+     conexion2.SQL.Text:= 'UPDATE Albaran ' +
+                          'SET numero_lineas = (SELECT COUNT(*) FROM lineas_albaran WHERE Ejercicio = ' + Ejercicio +
+                          ' AND Serie = '+ Serie +
+                          ' and numero_Al = ' + numero_Al.ToString   + ' ) ' +
+                          'WHERE Ejercicio = ' + Ejercicio +
+                          ' AND Serie = '+ Serie +
+                          ' and numero_Al = ' + numero_Al.ToString ;
+     conexion2.ExecSQL;
     //volver a enseñar el listado completo del albaran
    RefrescarLineas();
   end;
@@ -268,7 +266,7 @@ procedure TLineaAlbaran.btnDeleteLineaAlClick(Sender: TObject);
 var conexion: TADOQuery;
 var numero_Al: Integer;
 begin
-conexion:= DMDatos.ADOQueryLiAl;
+conexion:= DMDatos.ADOQCalculos;
 numero_Al:= StrToInt(EDnAlbaran.Text);
 
    if MessageDlg('¿seguro que quiere borrar el registro?',mtConfirmation, [mbYes, mbNo], 0) = mrYes then
@@ -288,7 +286,7 @@ numero_Al:= StrToInt(EDnAlbaran.Text);
       conexion.ExecSQL;
     end;
     //refrescar la tabla
-
+    Form2.VisibilizarTabla();
 end;
 
 //refrescar tablas
@@ -300,16 +298,37 @@ end;
 //crear nueva factura
 procedure TLineaAlbaran.CheckFacturarClick(Sender: TObject);
 var codigo_producto, numero_Al, numero_Fac : Integer;
-var conexionF, conexionLAl: TADOQuery;
+var conexionF, conexionLAl, conexion: TADOQuery;
 var descripcion_pro, Ejercicio, Serie, NombreFac: String;
+var FacturaExiste: Boolean;
 begin
    conexionF:= DMDatos.ADOQueryFactura;
    conexionLAl:= DMDatos.ADOQueryLiAl;
+   conexion:= DMDatos.ADOQCalculos;
    Ejercicio:= DBEjercicioAl.Text;
    Serie:=  DBSerieAl.Text;
    NombreFac := 'Factura';
    numero_Al:= StrToInt(EDnAlbaran.text);
    numero_Fac := FNumeroFac.NumeroContador(Ejercicio, NombreFac, Serie);
+
+
+  //verificamos que la factura no existe
+  conexion.SQL.Clear;
+  conexion.SQL.Text:= 'SELECT COUNT (*) FROM factura ' +
+                     'WHERE Ejercicio = ' + QuotedStr(Ejercicio) + ' AND ' +
+                     'Serie = ' + QuotedStr(Serie) + ' AND ' +
+                     'numero_Al = ' + IntToStr(numero_Al);
+  conexion.Open;
+
+  FacturaExiste := conexion.Fields[0].AsInteger > 0;
+  conexion.Close;
+
+  if FacturaExiste then
+    begin
+      Showmessage('La factura ya existe y no puede volver a crearse.');
+      Exit;
+    end;
+
   //conseguir la descripcion por el codigo del producto
   codigo_producto:= CodigoProducto(descripcion_pro);
 
@@ -348,12 +367,19 @@ begin
 
    conexionLAl.ExecSQL;
 
-   if numero_Fac <> 0 then
-    begin
-      conexionLAl.SQL.Clear;
-      conexionLAl.SQL.Text := 'SELECT * FROM factura';
-      conexionLAl.Open;
-    end;
-
+   //introducir el numero de factura en el albaran
+   conexion.SQL.Clear;
+   conexion.SQL.Text:= 'UPDATE albaran ' +
+                        ' SET factura = ' +   IntToStr(numero_Fac) +
+                        ' WHERE Ejercicio = ' + QuotedStr(Ejercicio) + ' AND ' +
+                        'Serie = ' + QuotedStr(Serie) + ' AND ' +
+                        'numero_Al = ' + IntToStr(numero_Al);
+   conexion.ExecSQL;
+    Form2.VisibilizarTabla();
+    RefrescarLineas();
+    // refrescamos lineas de factura
+    conexionF.SQL.Clear;
+    conexionF.SQL.Text:= 'SELECT * FROM factura';
+    conexionF.Open;
 end;
 end.

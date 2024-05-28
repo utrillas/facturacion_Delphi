@@ -206,7 +206,7 @@ begin
         conexion:= DMDatos.ADOQueryAlbaran;
         tabla:= 'Albaran';
       end
-    else
+    else if GridPage.ActivePage = PFacturas then
       begin
         conexion:= DMDatos.ADOQueryFactura;
         tabla:= 'Factura';
@@ -217,7 +217,7 @@ begin
 
     conexion.SQL.Clear;
     conexion.SQL.Text:='SELECT * FROM ' + tabla;
-    conexion.ExecSQL;
+    conexion.Open;
     conexion.GotoBookmark(Puntero);
 
 end;

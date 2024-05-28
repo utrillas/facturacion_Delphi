@@ -198,29 +198,29 @@ end;
 function TForm2.VisibilizarTabla: String;
 var conexion: TADOQuery;
 var tabla : String;
-    puntero:Tbookmark;
+    //puntero:Tbookmark;
 begin
     if GridPage.ActivePage = PAlbaranes then
-    begin
-      showmessage('albaran');
-      conexion:= DMDatos.ADOQueryAlbaran;
-      tabla:= 'Albaran';
-    end
-    else
-    begin
-      conexion:= DMDatos.ADOQueryFactura;
-      tabla:= 'Factura';
-    end;
+      begin
+        showmessage('albaran');
+        conexion:= DMDatos.ADOQueryAlbaran;
+        tabla:= 'Albaran';
+      end
+    else if GridPage.ActivePage = PFacturas then
+      begin
+        showmessage('facturas');
+        conexion:= DMDatos.ADOQueryFactura;
+        tabla:= 'Factura';
+      end;
 
-    puntero:=conexion.GetBookmark;
-     if (Tabla <> '') AND conexion.Active then
+    //puntero:=conexion.GetBookmark;
 
-     begin
-      conexion.SQL.Clear;
-      conexion.SQL.Text:='SELECT * FROM ' + tabla;
-      conexion.Open;
-      conexion.GotoBookmark(Puntero);
-     end;
+
+    //conexion.SQL.Clear;
+    conexion.SQL.Text:='SELECT * FROM ' + tabla;
+    conexion.Open;
+    //conexion.GotoBookmark(Puntero);
+
 end;
 //Abre el Form de las lineas
 procedure TForm2.btnAgregarLineaClick(Sender: TObject);

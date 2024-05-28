@@ -202,13 +202,12 @@ var tabla : String;
 begin
     if GridPage.ActivePage = PAlbaranes then
       begin
-        showmessage('albaran');
         conexion:= DMDatos.ADOQueryAlbaran;
         tabla:= 'Albaran';
       end
     else if GridPage.ActivePage = PFacturas then
       begin
-        showmessage('facturas');
+      showmessage('factura');
         conexion:= DMDatos.ADOQueryFactura;
         tabla:= 'Factura';
       end;
@@ -216,7 +215,7 @@ begin
     puntero:=conexion.GetBookmark;
 
 
-    //conexion.SQL.Clear;
+    conexion.SQL.Clear;
     conexion.SQL.Text:='SELECT * FROM ' + tabla;
     conexion.Open;
     conexion.GotoBookmark(Puntero);

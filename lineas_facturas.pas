@@ -248,6 +248,8 @@ begin
                           ' AND numero_factura = ' + numero_Fa.ToString;
     conexion2.ExecSQL;
     RefrescarLineasFactura();
+    EDTPrecio.Text:= '';
+    EDescuento.Text:= '';
   end;
 end;
 
@@ -318,6 +320,7 @@ begin
                               ' AND numero_factura = ' + numero_Fa.ToString;
         conexion2.ExecSQL;
     end;
+  Form2.VisibilizarTabla();
   RefrescarLineasFactura();
 end;
  procedure TFacturas.btnRefrescarLFacClick(Sender: TObject);

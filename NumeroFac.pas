@@ -66,7 +66,6 @@ begin
           currentDate := FormatDateTime ('yyyy-mm-dd', Now);
           numero_FacStr := IntToStr(numero_Fac);
           cliente_Str:= IntToStr(cliente);
-          showmessage('hola');
           conexion2.SQL.Clear;
           conexion2.SQL.Text :=
                 'INSERT INTO Albaran (Ejercicio, Nombre, Serie, numero_Al, fecha, numero_cliente) ' +
@@ -80,7 +79,7 @@ begin
                 showmessage(conexion2.SQL.Text);
           conexion2.ExecSQL;
           showmessage('Se ha introducido correctamente el albarán');
-          //form2.VisibilizarTabla();
+          form2.VisibilizarTabla();
       end
       else
       begin
