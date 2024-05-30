@@ -308,18 +308,22 @@ begin
 person:= DBERecoger.Text;
 conexion:= DMDatos.ADOQCalculos;
 Ejercicio:= DBEjercicioAl.Text;
-Serie:= DBNombreAl.Text;
-numero_Al:= DBSerieAl.Text;
-  if CBEntregado.Checked  then
+Serie:= DBSerieAl.Text;
+numero_Al:= EDnAlbaran.Text;
+
+  if CBEntregado.Checked = true  then
   begin
      conexion.SQL.Clear;
      conexion.SQL.Text:= 'UPDATE Albaran '+
-                        'SET entregado =  true ' +
+                        'SET entregado =  1, ' +
+                        'recogido_por = ' + QuotedStr(person) +
                         ' WHERE Ejercicio = ' + QuotedStr(Ejercicio) + ' AND ' +
                         ' Serie = ' + QuotedStr(Serie) + ' AND ' +
                         ' numero_Al = ' + QuotedStr(numero_Al);
+                        showmessage(conexion.SQL.Text);
+     conexion.ExecSQL;
   end;
-
+  Form2.VisibilizarTabla();
 end;
 
 procedure TLineaAlbaran.CheckFacturarClick(Sender: TObject);

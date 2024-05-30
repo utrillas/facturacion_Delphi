@@ -247,139 +247,12 @@ begin
                           ' AND Serie = ' + Serie +
                           ' AND numero_factura = ' + numero_Fa.ToString;
     conexion2.ExecSQL;
-
     RefrescarLineasFactura();
+    EDTPrecio.Text:= '';
+    EDescuento.Text:= '';
   end;
 end;
 
-{procedure TFacturas.btnAgregarFacturaClick(Sender: TObject);
-var
-  numero_Fa, iva, codigo_producto, num_linea: Integer;
-var
-  Precio, ETotalFactura, Descuento, PrecioT, cantidad, total_facturaQ: Double;
-var
-  Precio_Str, Descuento_str, PrecioT_str, total_factura_str, numero_Al,
-    PrecioT_Sstr, cantidad_str, eleccion, total_factura: String;
-var
-  conexion, conexion2: TADOQuery;
-var
-  puntero: Tbookmark;
-var
-  fecha: TDate;
-begin
-  codigo_producto := StrToInt(LineaAlbaran.EdCodigo.Text);
-  numero_Fa := StrToInt(ENumFactura.Text);
-  Descuento := StrToFloat(EDescuento.Text);
-  Precio := StrToFloat(EDTPrecio.Text);
-  Precio_Str := StringReplace(EDTPrecio.Text, ',', '.', [rfReplaceAll]);
-  conexion := DMDatos.ADOQueryLiFa;
-  conexion2 := DMDatos.ADOQCalculos;
-  num_linea := StrToInt(EdNumLineaFa.Text);
-  numero_Al := EdNumero_Al.Text;
-  puntero := conexion.GetBookmark;
-  total_facturaQ := 0;
-
-  // Insertar datos en la tabla linea_factura
-  if DMDatos.ADOQueryProducto.Locate('codigo_producto', codigo_producto, [])
-  then
-  begin
-    iva := DMDatos.ADOQueryProducto.FieldByName('iva').AsInteger;
-  end;
-
-  // buscar la cantidad de producto
-  DMDatos.ADOQueryLiAl.SQL.Text :=
-    'SELECT cantidad from linea_factura where codigo_producto = ' +
-    IntToStr(codigo_producto);
-  DMDatos.ADOQueryLiAl.Open;
-
-  if not DMDatos.ADOQueryLiAl.IsEmpty then
-  begin
-    cantidad := DMDatos.ADOQueryLiAl.FieldByName('cantidad').AsFloat;
-  end
-  else
-  begin
-    ShowMessage('No se encontro la cantidad');
-  end;
-
-  // cambiar el formato del descueto
-  if Descuento <> 0 then
-  begin
-    Descuento_str := StringReplace(EDescuento.Text, ',', '.', [rfReplaceAll]);
-  end
-  else
-  begin
-    ShowMessage('No se aplica ningún descuento');
-  end;
-
-  // Hallar el precio de cada producto.
-  PrecioT := (Precio * cantidad) * (1 - (Descuento / 100)) * (1 + (iva / 100));
-
-  if PrecioT <> 0 then
-  begin
-    PrecioT_str := FloatToStr(PrecioT);
-    PrecioT_Sstr := StringReplace(PrecioT_str, ',', '.', [rfReplaceAll]);
-  end
-  else
-  begin
-    ShowMessage('El total da 0');
-  end;
-
-  // introducir datos en linea_factura
-  if numero_Fa <> 0 then
-  begin
-    conexion.SQL.Clear;
-    conexion.SQL.Text := 'UPDATE linea_factura  ' +
-                          'SET numero_factura = ' + ENumFactura.Text + ', ' +
-                          ' precio_unidad = ' + Precio_Str + ' , ' +
-                          ' precio_total = ' + PrecioT_Sstr + ', ' +
-                          ' descuento = ' + Descuento_str   +
-                          ' WHERE linea_factura = ' + IntToStr(num_linea);
-    conexion.ExecSQL;
-
-    // introducir metodo de pago
-    if CBPago.ItemIndex = 1 then
-    begin
-      eleccion := 'Al contado';
-    end
-    else if CBPago.ItemIndex = 2 then
-    begin
-      eleccion := 'Tarjeta';
-    end
-    else if CBPago.ItemIndex = 3 then
-    begin
-      eleccion := 'Pagare 30';
-    end
-    else if CBPago.ItemIndex = 4 then
-    begin
-      eleccion := 'Pagare 60';
-    end
-    else if CBPago.ItemIndex = 5 then
-    begin
-      eleccion := 'Pagare 90';
-    end;
-
-
-
-    // introducir datos en factura
-
-    conexion2.SQL.Clear;
-    conexion2.SQL.Text := 'UPDATE factura ' + ' SET ' +
-      ' fecha = ' + QuotedStr(FormatDateTime('yyyy-mm-dd', NowDateFac.Date)) + ', ' +
-      ' modo_de_pago = ' + QuotedStr(eleccion) +
-      ' WHERE numero_factura = ' + numero_Fa.ToString;
-    conexion2.ExecSQL;
-    // sumar linea
-
-    conexion2.SQL.Clear;
-    conexion2.SQL.Text := 'UPDATE factura ' +
-      'SET numero_lineas = (SELECT COUNT(*) FROM linea_factura WHERE numero_factura = '
-      + numero_Fa.ToString + ' ) ' + 'WHERE numero_factura = ' +
-      numero_Fa.ToString;
-
-    RefrescarLineasFactura();
-  end;
-end;
-}
 // Borramos y contamos el numero de lineas
 procedure TFacturas.BtnBorrarFacClick(Sender: TObject);
 begin
@@ -458,7 +331,6 @@ end;
 // cerrar la pestaña
 procedure TFacturas.btnSalirFacClick(Sender: TObject);
 begin
-  Form2.VisibilizarTabla();
   close;
 end;
 //para que el metodo de pago sea fijo
@@ -475,12 +347,25 @@ begin
 end;
 // pone todos los edits cerrados
 procedure TFacturas.CheckPagadoClick(Sender: TObject);
+var conexion: TADOQuery;
+    Ejercicio, Serie, Numero_Fac: String;
 begin
+conexion:= DMDatos.ADOQCalculos;
+Ejercicio:= DBEjercicio.Text;
+Serie:= DBSerie.Text;
+numero_Fac:= ENumFactura.Text;
   if CheckPagado.Checked = True then
     begin
       CBPago.Enabled := False;
       EDTPrecio.ReadOnly := True;
       EDescuento.ReadOnly := True;
+
+      conexion.SQL.Clear;
+      conexion.SQL.Text:= 'UPDATE factura '+
+                        'SET pagado =  1 ' +
+                        ' WHERE Ejercicio = ' + QuotedStr(Ejercicio) + ' AND ' +
+                        ' Serie = ' + QuotedStr(Serie) + ' AND ' +
+                        ' numero_Al = ' + QuotedStr(numero_Fac);
     end;
 end;
 

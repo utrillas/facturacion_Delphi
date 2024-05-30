@@ -347,14 +347,28 @@ begin
 end;
 // pone todos los edits cerrados
 procedure TFacturas.CheckPagadoClick(Sender: TObject);
+var conexion: TADOQuery;
+    Ejercicio, Serie, Numero_Fac: String;
 begin
+conexion:= DMDatos.ADOQCalculos;
+Ejercicio:= DBEjercicio.Text;
+Serie:= DBSerie.Text;
+numero_Fac:= ENumFactura.Text;
   if CheckPagado.Checked = True then
     begin
       CBPago.Enabled := False;
       EDTPrecio.ReadOnly := True;
       EDescuento.ReadOnly := True;
 
+      conexion.SQL.Clear;
+      conexion.SQL.Text:= 'UPDATE factura '+
+                        'SET pagado =  1 ' +
+                        ' WHERE Ejercicio = ' + QuotedStr(Ejercicio) + ' AND ' +
+                        ' Serie = ' + QuotedStr(Serie) + ' AND ' +
+                        ' numero_factura = ' + QuotedStr(numero_Fac);
+      conexion.ExecSQL;
     end;
+    form2.VisibilizarTabla();
 end;
 
 end.

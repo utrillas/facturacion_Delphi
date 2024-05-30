@@ -248,6 +248,8 @@ begin
                           ' AND numero_factura = ' + numero_Fa.ToString;
     conexion2.ExecSQL;
     RefrescarLineasFactura();
+    EDTPrecio.Text:= '';
+    EDescuento.Text:= '';
   end;
 end;
 
@@ -329,7 +331,6 @@ end;
 // cerrar la pestaña
 procedure TFacturas.btnSalirFacClick(Sender: TObject);
 begin
-  Form2.VisibilizarTabla();
   close;
 end;
 //para que el metodo de pago sea fijo
@@ -352,6 +353,7 @@ begin
       CBPago.Enabled := False;
       EDTPrecio.ReadOnly := True;
       EDescuento.ReadOnly := True;
+
     end;
 end;
 

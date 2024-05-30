@@ -320,7 +320,6 @@ numero_Al:= EDnAlbaran.Text;
                         ' WHERE Ejercicio = ' + QuotedStr(Ejercicio) + ' AND ' +
                         ' Serie = ' + QuotedStr(Serie) + ' AND ' +
                         ' numero_Al = ' + QuotedStr(numero_Al);
-                        showmessage(conexion.SQL.Text);
      conexion.ExecSQL;
   end;
   Form2.VisibilizarTabla();
