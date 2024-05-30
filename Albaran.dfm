@@ -3381,7 +3381,7 @@ object LineaAlbaran: TLineaAlbaran
       Font.Style = []
       TabOrder = 0
     end
-    object DBEdit2: TDBEdit
+    object DBERecoger: TDBEdit
       Left = 292
       Top = 202
       Width = 374
@@ -3421,7 +3421,7 @@ object LineaAlbaran: TLineaAlbaran
       TabOrder = 4
       OnChange = EdNombreClienteChange
     end
-    object DBCheckBox1: TDBCheckBox
+    object CBEntregado: TDBCheckBox
       Left = 31
       Top = 208
       Width = 97
@@ -3430,6 +3430,7 @@ object LineaAlbaran: TLineaAlbaran
       DataField = 'entregado'
       DataSource = DMDatos.DataSourceAlbaran
       TabOrder = 5
+      OnClick = CBEntregadoClick
     end
     object DBEjercicioAl: TDBEdit
       Left = 77

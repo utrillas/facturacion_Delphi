@@ -35,11 +35,11 @@ type
     Label6: TLabel;
     Label8: TLabel;
     DPAlbaran: TDatePicker;
-    DBEdit2: TDBEdit;
+    DBERecoger: TDBEdit;
     EDnAlbaran: TDBEdit;
     EdCodigo: TDBEdit;
     EdNombreCliente: TDBEdit;
-    DBCheckBox1: TDBCheckBox;
+    CBEntregado: TDBCheckBox;
     DBEjercicioAl: TDBEdit;
     DBNombreAl: TDBEdit;
     DBSerieAl: TDBEdit;
@@ -56,6 +56,9 @@ type
     function CodigoProducto(descripcion_pro : String) : Integer;
     procedure RefrescarLineas();
     procedure contarLineas();
+    procedure CBEntregadoClick(Sender: TObject);
+
+
 
   private
     { Private declarations }
@@ -260,8 +263,6 @@ begin
 
      RefrescarLineas();
      contarLineas();
-
-
 end;
 
 
@@ -300,6 +301,31 @@ begin
 end;
 
 //crear nueva factura
+procedure TLineaAlbaran.CBEntregadoClick(Sender: TObject);
+var person, Ejercicio, Serie, numero_Al: string;
+    conexion: TADOQuery;
+begin
+person:= DBERecoger.Text;
+conexion:= DMDatos.ADOQCalculos;
+Ejercicio:= DBEjercicioAl.Text;
+Serie:= DBSerieAl.Text;
+numero_Al:= EDnAlbaran.Text;
+
+  if CBEntregado.Checked = true  then
+  begin
+     conexion.SQL.Clear;
+     conexion.SQL.Text:= 'UPDATE Albaran '+
+                        'SET entregado =  1, ' +
+                        'recogido_por = ' + QuotedStr(person) +
+                        ' WHERE Ejercicio = ' + QuotedStr(Ejercicio) + ' AND ' +
+                        ' Serie = ' + QuotedStr(Serie) + ' AND ' +
+                        ' numero_Al = ' + QuotedStr(numero_Al);
+                        showmessage(conexion.SQL.Text);
+     conexion.ExecSQL;
+  end;
+  Form2.VisibilizarTabla();
+end;
+
 procedure TLineaAlbaran.CheckFacturarClick(Sender: TObject);
 var codigo_producto, numero_Al, numero_Fac : Integer;
 var conexionF, conexionLAl, conexion: TADOQuery;

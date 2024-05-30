@@ -1142,7 +1142,7 @@ object Facturas: TFacturas
     BorderWidth = 10
     BorderStyle = bsSingle
     TabOrder = 0
-    ExplicitWidth = 628
+    ExplicitWidth = 626
     object Label1: TLabel
       Left = 232
       Top = 25
@@ -2803,8 +2803,8 @@ object Facturas: TFacturas
     BorderWidth = 10
     BorderStyle = bsSingle
     TabOrder = 2
-    ExplicitTop = 501
-    ExplicitWidth = 628
+    ExplicitTop = 493
+    ExplicitWidth = 626
     object btnAgregarFactura: TSpeedButton
       Left = 8
       Top = 8

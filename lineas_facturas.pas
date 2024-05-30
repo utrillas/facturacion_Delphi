@@ -353,6 +353,7 @@ begin
       CBPago.Enabled := False;
       EDTPrecio.ReadOnly := True;
       EDescuento.ReadOnly := True;
+
     end;
 end;
 

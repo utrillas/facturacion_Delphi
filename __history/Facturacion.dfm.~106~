@@ -4195,7 +4195,7 @@ object Form2: TForm2
       Height = 81
       Caption = 'Filtrar'
       Items.Strings = (
-        'Id'
+        'Serie'
         'Fecha'
         'Cliente')
       TabOrder = 2
